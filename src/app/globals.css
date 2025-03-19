@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 249, 250, 251;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 249, 250, 251;
+    --background-start-rgb: 31, 41, 55;
+    --background-end-rgb: 17, 24, 39;
+  }
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+  min-height: 100vh;
+}
+
+.audio-player-container {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.rhap_container {
+  background-color: #ffffff;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+@media (prefers-color-scheme: dark) {
+  .rhap_container {
+    background-color: #374151;
+    color: #F9FAFB;
+  }
+}
+
+.rhap_progress-indicator,
+.rhap_progress-filled {
+  background-color: #3B82F6;
+}
+
+.rhap_button-clear {
+  color: #3B82F6;
+}
+
+.rhap_time {
+  color: inherit;
+}
+
+@media (max-width: 640px) {
+  .rhap_container {
+    padding: 0.5rem;
+  }
+}

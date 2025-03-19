@@ -1,5 +1,5 @@
 import React from 'react';
-import H5AudioPlayer from 'react-h5-audio-player';
+import H5AudioPlayer, { RHAP_UI } from 'react-h5-audio-player';
 import 'react-h5-audio-player/lib/styles.css';
 
 interface AudioPlayerProps {
@@ -19,8 +19,15 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src, fileName }) => {
           autoPlay
           showJumpControls={true}
           layout="stacked"
-          customProgressBarSection={["PROGRESS_BAR", "CURRENT_TIME", "DURATION"]}
-          customControlsSection={["MAIN_CONTROLS", "VOLUME_CONTROLS"]}
+          customProgressBarSection={[
+            RHAP_UI.PROGRESS_BAR,
+            RHAP_UI.CURRENT_TIME,
+            RHAP_UI.DURATION
+          ]}
+          customControlsSection={[
+            RHAP_UI.MAIN_CONTROLS,
+            RHAP_UI.VOLUME_CONTROLS
+          ]}
           autoPlayAfterSrcChange={true}
         />
       </div>

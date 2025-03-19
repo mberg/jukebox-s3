@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { FaPlay, FaFolder, FaSort, FaSortUp, FaSortDown, FaSearch, FaDownload, FaEllipsisV } from 'react-icons/fa';
 
 interface MP3File {
@@ -34,6 +34,30 @@ const MP3List: React.FC<MP3ListProps> = ({
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
   const [searchQuery, setSearchQuery] = useState('');
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const dropdownRefs = useRef<{[key: string]: HTMLDivElement | null}>({});
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      // If activeDropdown is set and we have a ref for it
+      if (activeDropdown && dropdownRefs.current[activeDropdown]) {
+        // Check if the click is outside the dropdown
+        if (
+          dropdownRefs.current[activeDropdown] && 
+          !dropdownRefs.current[activeDropdown]?.contains(event.target as Node)
+        ) {
+          setActiveDropdown(null);
+        }
+      }
+    }
+
+    // Add event listener
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      // Clean up
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [activeDropdown]);
 
   const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return '0 Bytes';
@@ -79,10 +103,16 @@ const MP3List: React.FC<MP3ListProps> = ({
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
+    setActiveDropdown(null); // Close dropdown after download starts
   };
 
   const toggleDropdown = (key: string) => {
     setActiveDropdown(activeDropdown === key ? null : key);
+  };
+
+  // Ref callback function
+  const setDropdownRef = (key: string) => (el: HTMLDivElement | null) => {
+    dropdownRefs.current[key] = el;
   };
 
   const sortedAndFilteredFiles = useMemo(() => {
@@ -212,7 +242,10 @@ const MP3List: React.FC<MP3ListProps> = ({
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
-                  <div className="relative inline-block">
+                  <div 
+                    className="relative inline-block"
+                    ref={setDropdownRef(file.key)}
+                  >
                     <button 
                       onClick={() => toggleDropdown(file.key)}
                       className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 focus:outline-none"

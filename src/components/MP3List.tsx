@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { FaPlay, FaFolder, FaSort, FaSortUp, FaSortDown, FaSearch } from 'react-icons/fa';
+import { FaPlay, FaFolder, FaSort, FaSortUp, FaSortDown, FaSearch, FaDownload, FaEllipsisV } from 'react-icons/fa';
 
 interface MP3File {
   key: string;
@@ -32,6 +32,7 @@ const MP3List: React.FC<MP3ListProps> = ({
   const [sortField, setSortField] = useState<SortField>('lastModified');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
   const [searchQuery, setSearchQuery] = useState('');
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
   const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return '0 Bytes';
@@ -59,6 +60,19 @@ const MP3List: React.FC<MP3ListProps> = ({
     return sortDirection === 'asc' ? 
       <FaSortUp className="ml-1 text-blue-500" /> : 
       <FaSortDown className="ml-1 text-blue-500" />;
+  };
+
+  const handleDownload = (file: MP3File) => {
+    const a = document.createElement('a');
+    a.href = file.url;
+    a.download = file.name;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+
+  const toggleDropdown = (key: string) => {
+    setActiveDropdown(activeDropdown === key ? null : key);
   };
 
   const sortedAndFilteredFiles = useMemo(() => {
@@ -99,8 +113,8 @@ const MP3List: React.FC<MP3ListProps> = ({
   }
 
   return (
-    <div className="w-full">
-      <div className="mt-8 mb-6 px-6">
+    <div className="w-full pt-4">
+      <div className="max-w-[95%] mx-auto mb-6">
         <div className="relative">
           <input
             type="text"
@@ -112,8 +126,8 @@ const MP3List: React.FC<MP3ListProps> = ({
           <FaSearch className="absolute left-3 top-3 text-gray-400" />
         </div>
       </div>
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+      <div className="overflow-x-auto max-w-[98%] mx-auto">
+        <table className="w-full divide-y divide-gray-200 dark:divide-gray-700">
           <thead className="bg-gray-50 dark:bg-gray-800">
             <tr>
               <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
@@ -145,6 +159,9 @@ const MP3List: React.FC<MP3ListProps> = ({
                 <div className="flex items-center">
                   Last Modified {getSortIcon('lastModified')}
                 </div>
+              </th>
+              <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                Options
               </th>
             </tr>
           </thead>
@@ -182,6 +199,29 @@ const MP3List: React.FC<MP3ListProps> = ({
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm text-gray-500 dark:text-gray-400">
                     {formatDate(file.lastModified)}
+                  </div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
+                  <div className="relative inline-block">
+                    <button 
+                      onClick={() => toggleDropdown(file.key)}
+                      className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 focus:outline-none"
+                    >
+                      <FaEllipsisV />
+                    </button>
+                    {activeDropdown === file.key && (
+                      <div className="absolute right-0 z-10 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5">
+                        <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+                          <button
+                            onClick={() => handleDownload(file)}
+                            className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                            role="menuitem"
+                          >
+                            <FaDownload className="inline mr-2" /> Download MP3
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </td>
               </tr>

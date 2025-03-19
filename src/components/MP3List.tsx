@@ -7,6 +7,7 @@ interface MP3File {
   lastModified: Date;
   url: string;
   name: string;
+  duration?: number; // Duration in seconds (may not be available for all files)
 }
 
 interface MP3ListProps {
@@ -40,6 +41,15 @@ const MP3List: React.FC<MP3ListProps> = ({
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+  
+  // Keep this for future use
+  const formatDuration = (seconds?: number): string => {
+    if (!seconds) return '--:--';
+    
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
   const formatDate = (date: Date): string => {
